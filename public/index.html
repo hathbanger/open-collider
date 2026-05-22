@@ -604,14 +604,17 @@ let domains = [];
 function fitBriefFonts() {
   const grid = document.getElementById('examples');
   if (!grid) return;
-  const containerWidth = grid.clientWidth - 16; // subtract padding
+  const containerWidth = grid.clientWidth - 16;
   grid.querySelectorAll('.example-btn').forEach(btn => {
-    btn.style.fontSize = '40px'; // start big
-    let size = 40;
-    while (btn.scrollWidth > containerWidth && size > 8) {
-      size -= 1;
-      btn.style.fontSize = size + 'px';
+    // Binary search for largest font that fits
+    let lo = 8, hi = 120;
+    while (lo < hi) {
+      const mid = Math.ceil((lo + hi) / 2);
+      btn.style.fontSize = mid + 'px';
+      if (btn.scrollWidth <= containerWidth) lo = mid;
+      else hi = mid - 1;
     }
+    btn.style.fontSize = lo + 'px';
   });
 }
 
