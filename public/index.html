@@ -103,10 +103,8 @@
 
   .examples-grid {
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px 10px;
-    justify-content: center;
-    align-items: baseline;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .example-btn {
@@ -115,15 +113,15 @@
     color: #555;
     font-family: inherit;
     font-size: 12px;
-    padding: 3px 6px;
+    padding: 4px 8px;
     cursor: pointer;
     transition: all 0.15s;
-    line-height: 1.3;
+    line-height: 1.2;
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
   }
-
-  .example-btn:nth-child(3n+1) { font-size: 13px; color: #777; }
-  .example-btn:nth-child(5n+2) { font-size: 10px; }
-  .example-btn:nth-child(7n) { font-size: 15px; color: #888; }
 
   .example-btn:hover { color: #FF4F00; }
   .example-btn.selected { color: #FF4F00; text-decoration: underline; text-underline-offset: 3px; }
@@ -603,11 +601,28 @@
 <script>
 let domains = [];
 
+function fitBriefFonts() {
+  const grid = document.getElementById('examples');
+  if (!grid) return;
+  const containerWidth = grid.clientWidth - 16; // subtract padding
+  grid.querySelectorAll('.example-btn').forEach(btn => {
+    btn.style.fontSize = '40px'; // start big
+    let size = 40;
+    while (btn.scrollWidth > containerWidth && size > 8) {
+      size -= 1;
+      btn.style.fontSize = size + 'px';
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('motif').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') { e.preventDefault(); regenExamples(); }
   });
+  fitBriefFonts();
 });
+
+window.addEventListener('resize', fitBriefFonts);
 
 function useBrief(btn) {
   // Highlight selected
@@ -647,6 +662,7 @@ async function regenExamples() {
       b.style.animationDelay = `${i * 40}ms`;
       grid.appendChild(b);
     });
+    setTimeout(fitBriefFonts, 50);
   } catch (err) {
     console.error('Regen error:', err);
     grid.classList.remove('fading');
