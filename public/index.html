@@ -244,6 +244,7 @@
     overflow: hidden; transition: border-color 0.3s;
   }
   .domain-logo-slot svg { width: 40px; height: 40px; }
+  .domain-logo-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 7px; }
   .domain-logo-slot.loaded { border-color: transparent; }
   .domain-logo-placeholder {
     width: 16px; height: 16px; border: 2px solid var(--spinner-border);
@@ -279,6 +280,7 @@
     overflow: hidden; transition: border-color 0.3s;
   }
   .idea-logo-slot svg { width: 48px; height: 48px; }
+  .idea-logo-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 7px; }
   .idea-logo-slot.loaded { border-color: transparent; }
 
   .idea-body { flex: 1; min-width: 0; }
@@ -293,18 +295,7 @@
   }
   .idea-mechanism { color: var(--text-secondary); font-size: 12px; margin-bottom: 6px; line-height: 1.5; }
   .idea-attribution { color: var(--text-tertiary); font-size: 11px; }
-  .idea-actions { display: flex; gap: 8px; margin-top: 12px; }
-  .idea-actions button {
-    background: none; border: 1px solid var(--border); color: var(--text-tertiary);
-    font-family: inherit; font-size: 16px; width: 36px; height: 36px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    border-radius: 4px; transition: all 0.15s;
-  }
-  .idea-actions button:hover { border-color: var(--text-secondary); color: var(--text-primary); }
-  .idea-actions button.active-love { border-color: #E04000; color: #E04000; background: rgba(224,64,0,0.08); }
-  .idea-actions button.active-like { border-color: #00994D; color: #00994D; background: rgba(0,153,77,0.08); }
-  .idea-actions button.active-trash { border-color: var(--text-tertiary); color: var(--text-tertiary); background: rgba(128,128,128,0.06); }
-  .idea-card.trashed { opacity: 0.3; }
+
 
   .loading-dots::after { content: ''; animation: dots 1.5s steps(4, end) infinite; }
   @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
@@ -654,10 +645,16 @@ function handleEvent(msg) {
   }
 
   if (msg.type === 'domain-logos') {
-    (msg.logos || []).forEach((svg, i) => {
+    (msg.logos || []).forEach((src, i) => {
       const slot = document.getElementById(`domain-logo-${i}`);
-      if (slot && svg) { slot.innerHTML = svg; slot.classList.add('loaded'); }
-      else if (slot) { const ph = slot.querySelector('.domain-logo-placeholder'); if (ph) ph.style.display = 'none'; }
+      if (slot && src) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'domain logo';
+        slot.innerHTML = '';
+        slot.appendChild(img);
+        slot.classList.add('loaded');
+      } else if (slot) { const ph = slot.querySelector('.domain-logo-placeholder'); if (ph) ph.style.display = 'none'; }
     });
   }
 
@@ -682,11 +679,7 @@ function handleEvent(msg) {
           <div class="idea-tagline">${idea.tagline || ''}</div>
           <div class="idea-mechanism">${idea.mechanism}</div>
           <div class="idea-attribution">${idea.attribution || ''}</div>
-          <div class="idea-actions">
-            <button onclick="rate(this, 'love')" title="Love">❤️</button>
-            <button onclick="rate(this, 'like')" title="Like">👍</button>
-            <button onclick="rate(this, 'trash')" title="Trash">🗑️</button>
-          </div>
+
         </div>
       `;
       container.appendChild(card);
@@ -701,10 +694,16 @@ function handleEvent(msg) {
 
   if (msg.type === 'idea-logos') {
     const idx = msg.domainIndex;
-    (msg.logos || []).forEach((svg, j) => {
+    (msg.logos || []).forEach((src, j) => {
       const slot = document.getElementById(`idea-logo-${idx}-${j}`);
-      if (slot && svg) { slot.innerHTML = svg; slot.classList.add('loaded'); }
-      else if (slot) { const ph = slot.querySelector('.domain-logo-placeholder'); if (ph) ph.style.display = 'none'; }
+      if (slot && src) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'idea logo';
+        slot.innerHTML = '';
+        slot.appendChild(img);
+        slot.classList.add('loaded');
+      } else if (slot) { const ph = slot.querySelector('.domain-logo-placeholder'); if (ph) ph.style.display = 'none'; }
     });
   }
 
@@ -721,13 +720,7 @@ function handleEvent(msg) {
   }
 }
 
-function rate(btn, type) {
-  const actions = btn.parentElement;
-  actions.querySelectorAll('button').forEach(b => b.classList.remove('active-love', 'active-like', 'active-trash'));
-  btn.classList.add(`active-${type}`);
-  const card = btn.closest('.idea-card');
-  if (type === 'trash') card.classList.add('trashed'); else card.classList.remove('trashed');
-}
+
 </script>
 </body>
 </html>
