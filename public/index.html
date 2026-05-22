@@ -504,18 +504,79 @@
     75% { content: '...'; }
   }
 
+  /* ── BACK BUTTON (mobile only) ── */
+  .back-btn {
+    display: none;
+    background: none;
+    border: 1px solid #333;
+    color: #888;
+    font-family: inherit;
+    font-size: 11px;
+    padding: 6px 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+  .back-btn:hover { border-color: #FF4F00; color: #FF4F00; }
+
   /* ── MOBILE ── */
   @media (max-width: 700px) {
-    .layout { flex-direction: column; }
+    html, body { overflow: auto; height: auto; }
+
+    .layout {
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+    }
+
     .sidebar {
       width: 100%;
       min-width: unset;
       height: auto;
-      max-height: 40vh;
+      max-height: none;
       border-right: none;
       border-bottom: 1px solid #1A1A1A;
+      overflow: visible;
     }
-    .main-panel { height: 60vh; }
+
+    .briefs-scroll {
+      overflow-y: visible;
+      max-height: none;
+    }
+
+    .main-panel {
+      height: auto;
+      min-height: 60vh;
+      overflow: visible;
+    }
+
+    .results-scroll {
+      overflow-y: visible;
+      padding: 16px;
+    }
+
+    .back-btn { display: inline-block; }
+
+    /* When colliding, hide sidebar on mobile */
+    .layout.mobile-results .sidebar { display: none; }
+    .layout.mobile-results .main-panel { min-height: 100vh; }
+
+    .sidebar-header h1 { font-size: 16px; }
+    .sidebar-header { padding: 16px 12px 12px; }
+    .motif-section { padding: 8px 12px; }
+    .regen-row { padding: 8px 12px; }
+    .briefs-scroll { padding: 6px 12px; }
+
+    .example-btn {
+      font-size: 14px !important; /* override fitBriefFonts on mobile */
+      white-space: normal;
+      line-height: 1.3;
+    }
+
+    .domain-block { padding-left: 12px; }
+    .idea-card { padding: 14px; }
+
+    .collider-loading { min-height: 50vh; }
+    .empty-state { min-height: 30vh; }
   }
 </style>
 </head>
@@ -570,6 +631,7 @@
   <!-- RIGHT PANEL -->
   <div class="main-panel">
     <div class="main-header" id="mainHeader">
+      <button class="back-btn" id="backBtn" onclick="goBack()">← BRIEFS</button>
       <span class="active-brief-label" id="activeBriefLabel" style="display:none">COLLIDING:</span>
       <span class="active-brief-text" id="activeBriefText"></span>
       <span class="status" id="status"></span>
@@ -604,6 +666,9 @@
 let domains = [];
 
 function fitBriefFonts() {
+  // Skip on mobile — briefs wrap naturally
+  if (window.innerWidth <= 700) return;
+
   const grid = document.getElementById('examples');
   if (!grid) return;
   const containerWidth = grid.clientWidth;
@@ -686,9 +751,18 @@ async function regenExamples() {
   }
 }
 
+function goBack() {
+  document.querySelector('.layout').classList.remove('mobile-results');
+  window.scrollTo(0, 0);
+}
+
 async function collide(brief) {
   if (!brief || !brief.trim()) return;
   brief = brief.trim();
+
+  // On mobile, switch to results view
+  document.querySelector('.layout').classList.add('mobile-results');
+  window.scrollTo(0, 0);
 
   const label = document.getElementById('activeBriefLabel');
   const text = document.getElementById('activeBriefText');
