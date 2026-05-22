@@ -115,7 +115,7 @@ app.post('/api/regen-examples', async (c) => {
   try {
     const { motif } = await c.req.json().catch(() => ({}));
     const motifClause = motif
-      ? `\n\nMOTIF CONSTRAINT: Every brief must be colored by the motif "${motif}". The motif is a thematic lens — it shapes the *energy* and *angle* of the briefs, not their literal subject. Don't mention the motif word directly in the briefs. Let it seep into the framing, the tension, the way the problem is posed.`
+      ? `\n\nMOTIF: "${motif}". Generate all 20 briefs ABOUT this topic. Every brief should directly involve, explore, or reimagine something related to "${motif}". Different angles, different industries, different scales — but all centered on "${motif}". Make them specific and varied, not generic.`
       : '';
     const res = await llmCall([{
       role: 'user',
