@@ -382,9 +382,38 @@
   .results-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
   .domain-block {
-    margin-bottom: 40px;
+    margin-bottom: 32px;
     border-left: 2px solid #00CC66;
     padding-left: 20px;
+  }
+
+  .domain-entering {
+    animation: slideIn 0.4s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .domain-waiting {
+    color: #333;
+    font-size: 11px;
+    padding: 8px 0;
+    letter-spacing: 1px;
+  }
+
+  .domain-ideas { min-height: 20px; }
+
+  .idea-entering {
+    animation: ideaFade 0.35s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes ideaFade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .domain-header { margin-bottom: 16px; }
@@ -688,60 +717,87 @@ async function collide(brief) {
 function handleEvent(msg) {
   const status = document.getElementById('status');
   const results = document.getElementById('results');
+  const loading = document.getElementById('loadingAnim');
+
+  if (msg.type === 'status') {
+    const loadingText = document.getElementById('loadingText');
+    loadingText.textContent = msg.message.toLowerCase().replace(/\.+$/, '');
+  }
 
   if (msg.type === 'domains') {
     domains = msg.domains;
-    const loadingText = document.getElementById('loadingText');
-    loadingText.textContent = `${domains.length} domains found — colliding`;
+
+    // Hide animation, show results with all domain blocks as empty shells
+    loading.style.display = 'none';
+    results.style.display = 'block';
+
+    domains.forEach((d, i) => {
+      const block = document.createElement('div');
+      block.className = 'domain-block domain-entering';
+      block.id = `domain-${i}`;
+      block.style.animationDelay = `${i * 120}ms`;
+      block.innerHTML = `
+        <div class="domain-header">
+          <div class="domain-name">${d.domain || d.name}</div>
+          <div class="domain-principle">${d.principle}</div>
+          <div class="domain-question">${d.question}</div>
+        </div>
+        <div class="domain-ideas" id="ideas-${i}">
+          <div class="domain-waiting"><span class="loading-dots">awaiting collision</span></div>
+        </div>
+      `;
+      results.appendChild(block);
+    });
+
+    status.textContent = `${domains.length} domains found — colliding...`;
   }
 
-  if (msg.type === 'domain_start') {
-    // First domain arriving = hide loading, show results
-    const loading = document.getElementById('loadingAnim');
-    if (loading.style.display !== 'none') {
-      loading.style.display = 'none';
-      results.style.display = 'block';
+  if (msg.type === 'collision') {
+    // Find the matching domain block
+    const idx = domains.findIndex(d => (d.domain || d.name) === msg.domain);
+    const container = document.getElementById(`ideas-${idx}`);
+    if (!container) return;
+
+    // Remove the "awaiting" placeholder
+    const waiting = container.querySelector('.domain-waiting');
+    if (waiting) waiting.remove();
+
+    // Add each idea
+    const ideas = msg.ideas || [];
+    ideas.forEach((idea, j) => {
+      const card = document.createElement('div');
+      card.className = 'idea-card idea-entering';
+      card.style.animationDelay = `${j * 80}ms`;
+      card.innerHTML = `
+        <div class="idea-name">${idea.name}</div>
+        <div class="idea-mechanism">${idea.mechanism}</div>
+        <div class="idea-attribution">${idea.attribution || ''}</div>
+        <div class="idea-actions">
+          <button onclick="rate(this, 'love')" title="Love">❤️</button>
+          <button onclick="rate(this, 'like')" title="Like">👍</button>
+          <button onclick="rate(this, 'trash')" title="Trash">🗑️</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    // Update status
+    const filledCount = results.querySelectorAll('.idea-card').length;
+    const remainingDomains = results.querySelectorAll('.domain-waiting').length;
+    if (remainingDomains > 0) {
+      status.textContent = `${filledCount} ideas — ${remainingDomains} domain${remainingDomains > 1 ? 's' : ''} remaining...`;
     }
-
-    const domain = domains.find(d => d.name === msg.domain);
-    if (!domain) return;
-
-    const block = document.createElement('div');
-    block.className = 'domain-block';
-    block.id = `domain-${msg.domain.replace(/\s+/g, '-')}`;
-    block.innerHTML = `
-      <div class="domain-header">
-        <div class="domain-name">${domain.name}</div>
-        <div class="domain-principle">${domain.principle}</div>
-        <div class="domain-question">${domain.question}</div>
-      </div>
-    `;
-    results.appendChild(block);
-  }
-
-  if (msg.type === 'idea') {
-    const blockId = `domain-${msg.domain.replace(/\s+/g, '-')}`;
-    const block = document.getElementById(blockId);
-    if (!block) return;
-
-    const card = document.createElement('div');
-    card.className = 'idea-card';
-    card.innerHTML = `
-      <div class="idea-name">${msg.idea.name}</div>
-      <div class="idea-mechanism">${msg.idea.mechanism}</div>
-      <div class="idea-attribution">${msg.idea.attribution}</div>
-      <div class="idea-actions">
-        <button onclick="rate(this, 'love')" title="Love">❤️</button>
-        <button onclick="rate(this, 'like')" title="Like">👍</button>
-        <button onclick="rate(this, 'trash')" title="Trash">🗑️</button>
-      </div>
-    `;
-    block.appendChild(card);
   }
 
   if (msg.type === 'done') {
     const ideaCount = results.querySelectorAll('.idea-card').length;
     status.textContent = `${ideaCount} ideas from ${domains.length} domains`;
+  }
+
+  if (msg.type === 'error') {
+    loading.style.display = 'none';
+    results.style.display = 'block';
+    status.textContent = `error: ${msg.message}`;
   }
 }
 
