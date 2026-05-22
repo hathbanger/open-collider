@@ -115,19 +115,22 @@ app.post('/api/regen-examples', async (c) => {
   try {
     const { motif } = await c.req.json().catch(() => ({}));
     const motifClause = motif
-      ? `\n\nMOTIF: "${motif}". Generate all 20 briefs ABOUT this topic. Every brief should directly involve, explore, or reimagine something related to "${motif}". Different angles, different industries, different scales — but all centered on "${motif}". Make them specific and varied, not generic.`
+      ? `\n\nMOTIF: "${motif}". All 20 briefs must be ABOUT "${motif}" — different angles, industries, scales. Still 3-8 words each. Still punchy word-cloud tags, not sentences.`
       : '';
     const res = await llmCall([{
       role: 'user',
-      content: `Generate 20 provocative, diverse ideation briefs for a bisociation/creativity engine. Each brief should be a single sentence — a real problem worth solving or a design challenge worth exploring.
+      content: `Generate 20 provocative ideation briefs for a bisociation engine.
+
+CRITICAL FORMAT RULE: Each brief must be 3-8 words. Like a word cloud tag. NOT a sentence. NOT a description. Just a punchy phrase.
+
+Good examples: "shark-proof swimming pools", "edible architecture", "gym membership guilt", "dating app for enemies", "voting with your feet literally"
+Bad examples: "Design a system where sharks patrol swimming pools to keep people honest" (TOO LONG)
 
 Rules:
-- Cover wildly different domains: tech, health, education, cities, food, finance, culture, science, politics, art, sports, relationships, work, environment, etc.
-- Mix scales: personal habits, product design, systemic change, policy, physical spaces
-- Make them punchy and specific — not vague or generic
-- Some should be contrarian or uncomfortable
-- Some should be playful/fun
-- All should make someone think "ooh I want to see what the collider does with THAT"${motifClause}
+- Wildly different domains: tech, health, food, finance, culture, science, art, sports, cities, etc.
+- Punchy, specific, surprising
+- Mix of contrarian, playful, and provocative
+- 3-8 words max each. Shorter is better.${motifClause}
 
 Return ONLY a JSON array of 20 strings.`
     }], { stream: false });

@@ -95,27 +95,32 @@
   .examples-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px 14px;
     margin-bottom: 16px;
+    justify-content: center;
+    align-items: baseline;
   }
 
   .example-btn {
-    background: #111;
-    border: 1px solid #2A2A2A;
-    color: #777;
+    background: transparent;
+    border: none;
+    color: #666;
     font-family: inherit;
-    font-size: 11px;
-    padding: 6px 12px;
+    font-size: 13px;
+    padding: 4px 8px;
     cursor: pointer;
     transition: all 0.15s;
     text-align: left;
-    line-height: 1.4;
+    line-height: 1.3;
+    white-space: nowrap;
   }
 
+  .example-btn:nth-child(3n+1) { font-size: 15px; color: #888; }
+  .example-btn:nth-child(5n+2) { font-size: 11px; }
+  .example-btn:nth-child(7n) { font-size: 17px; color: #999; }
+
   .example-btn:hover {
-    border-color: #FF4F00;
-    color: #E0E0E0;
-    background: #1A1A1A;
+    color: #FF4F00;
   }
 
   .regen-btn {
@@ -341,26 +346,26 @@
       <input type="text" id="motif" class="motif-input" placeholder="decay, rebellion, fermentation, gravity, contagion..." />
     </div>
     <div class="examples-grid" id="examples">
-      <button class="example-btn" onclick="useBrief(this)">New ways to onboard users to a crypto wallet</button>
-      <button class="example-btn" onclick="useBrief(this)">How to make code review less soul-crushing</button>
-      <button class="example-btn" onclick="useBrief(this)">Redesign the job interview to actually predict performance</button>
-      <button class="example-btn" onclick="useBrief(this)">Make a CLI tool go viral with non-technical users</button>
-      <button class="example-btn" onclick="useBrief(this)">Break users out of their Spotify taste bubble</button>
-      <button class="example-btn" onclick="useBrief(this)">Reduce no-shows for medical appointments by 80%</button>
-      <button class="example-btn" onclick="useBrief(this)">Make open-source contributors stay past their first PR</button>
-      <button class="example-btn" onclick="useBrief(this)">Design a loyalty program that doesn't feel like a scam</button>
-      <button class="example-btn" onclick="useBrief(this)">Get teenagers to care about personal finance</button>
-      <button class="example-btn" onclick="useBrief(this)">Reinvent the conference talk format for the AI era</button>
-      <button class="example-btn" onclick="useBrief(this)">Make paying with AI agents feel trustworthy</button>
-      <button class="example-btn" onclick="useBrief(this)">Fix the cold-start problem for a two-sided marketplace</button>
-      <button class="example-btn" onclick="useBrief(this)">Design a city park that reduces loneliness</button>
-      <button class="example-btn" onclick="useBrief(this)">Make reading long-form content addictive again</button>
-      <button class="example-btn" onclick="useBrief(this)">Build a developer community that doesn't die after launch</button>
-      <button class="example-btn" onclick="useBrief(this)">How to teach math without anyone realizing they're learning math</button>
-      <button class="example-btn" onclick="useBrief(this)">Design a voting system resistant to polarization</button>
-      <button class="example-btn" onclick="useBrief(this)">Make enterprise software feel like a consumer app</button>
-      <button class="example-btn" onclick="useBrief(this)">Reinvent the restaurant menu for dietary restrictions</button>
-      <button class="example-btn" onclick="useBrief(this)">Get people to actually use their gym membership</button>
+      <button class="example-btn" onclick="useBrief(this)">crypto wallet onboarding</button>
+      <button class="example-btn" onclick="useBrief(this)">soul-crushing code review</button>
+      <button class="example-btn" onclick="useBrief(this)">job interviews that predict nothing</button>
+      <button class="example-btn" onclick="useBrief(this)">viral CLI tools</button>
+      <button class="example-btn" onclick="useBrief(this)">Spotify taste bubbles</button>
+      <button class="example-btn" onclick="useBrief(this)">medical no-shows</button>
+      <button class="example-btn" onclick="useBrief(this)">first-PR contributor churn</button>
+      <button class="example-btn" onclick="useBrief(this)">loyalty programs that feel like scams</button>
+      <button class="example-btn" onclick="useBrief(this)">teenagers ignoring finance</button>
+      <button class="example-btn" onclick="useBrief(this)">conference talks in the AI era</button>
+      <button class="example-btn" onclick="useBrief(this)">agent payments trust gap</button>
+      <button class="example-btn" onclick="useBrief(this)">marketplace cold-start</button>
+      <button class="example-btn" onclick="useBrief(this)">parks against loneliness</button>
+      <button class="example-btn" onclick="useBrief(this)">long-form reading addiction</button>
+      <button class="example-btn" onclick="useBrief(this)">dev communities dying post-launch</button>
+      <button class="example-btn" onclick="useBrief(this)">stealth math education</button>
+      <button class="example-btn" onclick="useBrief(this)">anti-polarization voting</button>
+      <button class="example-btn" onclick="useBrief(this)">enterprise UX that doesn't suck</button>
+      <button class="example-btn" onclick="useBrief(this)">menus for dietary chaos</button>
+      <button class="example-btn" onclick="useBrief(this)">unused gym memberships</button>
     </div>
     <button class="regen-btn" id="regenBtn" onclick="regenExamples()" title="Regenerate examples">
       <span class="regen-icon">↻</span> NEW BRIEFS
