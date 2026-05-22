@@ -444,6 +444,24 @@
     padding: 20px;
     margin-bottom: 12px;
     position: relative;
+    display: flex;
+    gap: 16px;
+  }
+
+  .idea-logo {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+  }
+
+  .idea-logo svg {
+    width: 56px;
+    height: 56px;
+  }
+
+  .idea-body {
+    flex: 1;
+    min-width: 0;
   }
 
   .idea-name {
@@ -573,7 +591,15 @@
     }
 
     .domain-block { padding-left: 12px; }
-    .idea-card { padding: 14px; }
+    .idea-card {
+      padding: 14px;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .idea-logo { width: 72px; height: 72px; }
+    .idea-logo svg { width: 72px; height: 72px; }
+    .idea-actions { justify-content: center; }
 
     .collider-loading { min-height: 50vh; }
     .empty-state { min-height: 30vh; }
@@ -664,6 +690,91 @@
 
 <script>
 let domains = [];
+
+// Procedural SVG logo generator — deterministic from idea name
+function generateLogo(name) {
+  // Simple hash from string
+  let h = 0;
+  for (let i = 0; i < name.length; i++) {
+    h = ((h << 5) - h + name.charCodeAt(i)) | 0;
+  }
+  const seed = Math.abs(h);
+
+  // Pick accent colors from seed
+  const hues = [
+    [255, 79, 0],   // orange
+    [0, 204, 102],  // green
+    [0, 102, 255],  // blue
+    [180, 60, 255], // purple
+    [255, 200, 0],  // gold
+    [0, 200, 200],  // cyan
+  ];
+  const c1 = hues[seed % hues.length];
+  const c2 = hues[(seed * 7 + 3) % hues.length];
+
+  const s = 56; // viewBox size
+  const cx = s / 2, cy = s / 2;
+  let shapes = '';
+
+  // Layer 1: outer ring or polygon
+  const sides = 3 + (seed % 5); // 3-7 sides
+  const r1 = 24;
+  const rotation = (seed * 13) % 360;
+  let points = [];
+  for (let i = 0; i < sides; i++) {
+    const a = (Math.PI * 2 * i / sides) + (rotation * Math.PI / 180);
+    points.push(`${cx + r1 * Math.cos(a)},${cy + r1 * Math.sin(a)}`);
+  }
+  shapes += `<polygon points="${points.join(' ')}" fill="none" stroke="rgba(${c1.join(',')},0.6)" stroke-width="1.5"/>`;
+
+  // Layer 2: inner geometric
+  const innerType = (seed >> 4) % 4;
+  const r2 = 12 + (seed % 6);
+
+  if (innerType === 0) {
+    // Concentric circles
+    shapes += `<circle cx="${cx}" cy="${cy}" r="${r2}" fill="none" stroke="rgba(${c2.join(',')},0.4)" stroke-width="1"/>`;
+    shapes += `<circle cx="${cx}" cy="${cy}" r="${r2 * 0.5}" fill="rgba(${c1.join(',')},0.15)" stroke="rgba(${c1.join(',')},0.7)" stroke-width="1.5"/>`;
+  } else if (innerType === 1) {
+    // Cross lines
+    const d = r2 * 0.8;
+    shapes += `<line x1="${cx - d}" y1="${cy}" x2="${cx + d}" y2="${cy}" stroke="rgba(${c2.join(',')},0.5)" stroke-width="1.5"/>`;
+    shapes += `<line x1="${cx}" y1="${cy - d}" x2="${cx}" y2="${cy + d}" stroke="rgba(${c2.join(',')},0.5)" stroke-width="1.5"/>`;
+    shapes += `<circle cx="${cx}" cy="${cy}" r="4" fill="rgba(${c1.join(',')},0.8)"/>`;
+  } else if (innerType === 2) {
+    // Diamond
+    const d = r2 * 0.7;
+    shapes += `<polygon points="${cx},${cy - d} ${cx + d},${cy} ${cx},${cy + d} ${cx - d},${cy}" fill="rgba(${c1.join(',')},0.1)" stroke="rgba(${c1.join(',')},0.6)" stroke-width="1.5"/>`;
+    shapes += `<circle cx="${cx}" cy="${cy}" r="3" fill="rgba(${c2.join(',')},0.9)"/>`;
+  } else {
+    // Nested triangles
+    const d = r2 * 0.7;
+    shapes += `<polygon points="${cx},${cy - d} ${cx + d * 0.87},${cy + d * 0.5} ${cx - d * 0.87},${cy + d * 0.5}" fill="none" stroke="rgba(${c1.join(',')},0.5)" stroke-width="1.5"/>`;
+    shapes += `<polygon points="${cx},${cy + d * 0.6} ${cx + d * 0.52},${cy - d * 0.3} ${cx - d * 0.52},${cy - d * 0.3}" fill="none" stroke="rgba(${c2.join(',')},0.5)" stroke-width="1.5"/>`;
+  }
+
+  // Layer 3: accent dots at vertices
+  const dotCount = 2 + (seed % 3);
+  for (let i = 0; i < dotCount; i++) {
+    const a = (Math.PI * 2 * i / dotCount) + ((seed * 37) % 360) * Math.PI / 180;
+    const dr = 18 + ((seed >> (i + 2)) % 6);
+    const dx = cx + dr * Math.cos(a);
+    const dy = cy + dr * Math.sin(a);
+    shapes += `<circle cx="${dx}" cy="${dy}" r="2" fill="rgba(${c1.join(',')},0.7)"/>`;
+  }
+
+  // Layer 4: subtle arc
+  const arcR = 20 + (seed % 5);
+  const arcStart = (seed * 23) % 360;
+  const arcEnd = arcStart + 90 + (seed % 90);
+  const x1 = cx + arcR * Math.cos(arcStart * Math.PI / 180);
+  const y1 = cy + arcR * Math.sin(arcStart * Math.PI / 180);
+  const x2 = cx + arcR * Math.cos(arcEnd * Math.PI / 180);
+  const y2 = cy + arcR * Math.sin(arcEnd * Math.PI / 180);
+  shapes += `<path d="M${x1},${y1} A${arcR},${arcR} 0 0 1 ${x2},${y2}" fill="none" stroke="rgba(${c2.join(',')},0.3)" stroke-width="1"/>`;
+
+  return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">${shapes}</svg>`;
+}
 
 function fitBriefFonts() {
   // Skip on mobile — briefs wrap naturally
@@ -872,14 +983,18 @@ function handleEvent(msg) {
       const card = document.createElement('div');
       card.className = 'idea-card idea-entering';
       card.style.animationDelay = `${j * 80}ms`;
+      const logo = generateLogo(idea.name);
       card.innerHTML = `
-        <div class="idea-name">${idea.name}</div>
-        <div class="idea-mechanism">${idea.mechanism}</div>
-        <div class="idea-attribution">${idea.attribution || ''}</div>
-        <div class="idea-actions">
-          <button onclick="rate(this, 'love')" title="Love">❤️</button>
-          <button onclick="rate(this, 'like')" title="Like">👍</button>
-          <button onclick="rate(this, 'trash')" title="Trash">🗑️</button>
+        <div class="idea-logo">${logo}</div>
+        <div class="idea-body">
+          <div class="idea-name">${idea.name}</div>
+          <div class="idea-mechanism">${idea.mechanism}</div>
+          <div class="idea-attribution">${idea.attribution || ''}</div>
+          <div class="idea-actions">
+            <button onclick="rate(this, 'love')" title="Love">❤️</button>
+            <button onclick="rate(this, 'like')" title="Like">👍</button>
+            <button onclick="rate(this, 'trash')" title="Trash">🗑️</button>
+          </div>
         </div>
       `;
       container.appendChild(card);
