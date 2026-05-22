@@ -134,6 +134,19 @@
   .example-btn:hover { color: var(--accent); }
   .example-btn.selected { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
   .examples-grid.fading .example-btn { opacity: 0; transform: translateY(-4px); transition: opacity 0.2s, transform 0.2s; }
+  .briefs-loader {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 48px 16px; gap: 16px; color: var(--text-muted);
+  }
+  .briefs-loader-dots { display: flex; gap: 6px; }
+  .briefs-loader-dots span {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.3;
+    animation: briefs-dot 1.2s ease-in-out infinite;
+  }
+  .briefs-loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .briefs-loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes briefs-dot { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1.2); } }
+  .briefs-loader-text { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
   .example-btn.fade-in { animation: fadeUp 0.3s ease forwards; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -498,6 +511,12 @@ async function regenExamples() {
   btn.disabled = true;
   btn.classList.add('spinning');
   grid.classList.add('fading');
+  await new Promise(r => setTimeout(r, 200));
+  grid.innerHTML = `<div class="briefs-loader">
+    <div class="briefs-loader-dots"><span></span><span></span><span></span></div>
+    <div class="briefs-loader-text">generating briefs</div>
+  </div>`;
+  grid.classList.remove('fading');
   try {
     const motif = document.getElementById('motif').value.trim();
     const res = await fetch('/api/regen-examples', {
@@ -506,9 +525,7 @@ async function regenExamples() {
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    await new Promise(r => setTimeout(r, 250));
     grid.innerHTML = '';
-    grid.classList.remove('fading');
     data.briefs.forEach((brief, i) => {
       const b = document.createElement('button');
       b.className = 'example-btn fade-in';
@@ -519,7 +536,7 @@ async function regenExamples() {
     });
   } catch (err) {
     console.error('Regen error:', err);
-    grid.classList.remove('fading');
+    grid.innerHTML = '<div class="briefs-loader"><div class="briefs-loader-text">failed to load — try again</div></div>';
   } finally {
     btn.disabled = false;
     btn.classList.remove('spinning');
