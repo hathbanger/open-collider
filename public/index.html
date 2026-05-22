@@ -30,10 +30,12 @@
   .sidebar {
     width: 20%;
     min-width: 200px;
+    max-width: 280px;
     border-right: 1px solid #1A1A1A;
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow: hidden;
   }
 
   .sidebar-header {
@@ -117,12 +119,11 @@
     cursor: pointer;
     transition: all 0.15s;
     line-height: 1.3;
-    white-space: nowrap;
   }
 
-  .example-btn:nth-child(3n+1) { font-size: 14px; color: #777; }
+  .example-btn:nth-child(3n+1) { font-size: 13px; color: #777; }
   .example-btn:nth-child(5n+2) { font-size: 10px; }
-  .example-btn:nth-child(7n) { font-size: 16px; color: #888; }
+  .example-btn:nth-child(7n) { font-size: 15px; color: #888; }
 
   .example-btn:hover { color: #FF4F00; }
   .example-btn.selected { color: #FF4F00; text-decoration: underline; text-underline-offset: 3px; }
@@ -575,7 +576,8 @@ function handleEvent(msg) {
   }
 
   if (msg.type === 'done') {
-    status.textContent = `${msg.total_ideas} ideas from ${domains.length} domains`;
+    const ideaCount = results.querySelectorAll('.idea-card').length;
+    status.textContent = `${ideaCount} ideas from ${domains.length} domains`;
   }
 }
 
