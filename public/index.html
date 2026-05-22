@@ -755,8 +755,8 @@ function handleEvent(msg) {
       block.innerHTML = `
         <div class="domain-header">
           <div class="domain-name">${d.domain || d.name}</div>
-          <div class="domain-principle">${d.principle}</div>
-          <div class="domain-question">${d.question}</div>
+          <div class="domain-principle">${d.active_principle || d.principle || ''}</div>
+          <div class="domain-question">${d.bridging_question || d.question || ''}</div>
         </div>
         <div class="domain-ideas" id="ideas-${i}">
           <div class="domain-waiting"><span class="loading-dots">awaiting collision</span></div>
