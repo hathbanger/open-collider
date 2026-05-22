@@ -5,601 +5,223 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Open Collider</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html, body {
-    height: 100%;
-    overflow: hidden;
-  }
-
+  html, body { height: 100%; overflow: hidden; }
   body {
     background: #0A0A0A;
     color: #E0E0E0;
-    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     line-height: 1.6;
   }
 
-  .layout {
-    display: flex;
-    height: 100vh;
-  }
+  .layout { display: flex; height: 100vh; }
 
-  /* ── LEFT SIDEBAR (1/5) ── */
+  /* ── SIDEBAR ── */
   .sidebar {
-    width: 25%;
-    min-width: 200px;
+    width: 25%; min-width: 200px;
     border-right: 1px solid #1A1A1A;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+    display: flex; flex-direction: column;
+    height: 100vh; overflow: hidden;
   }
-
-  .sidebar-header {
-    padding: 24px 16px 16px;
-    border-bottom: 1px solid #1A1A1A;
-    flex-shrink: 0;
-  }
-
-  .sidebar-header h1 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #FF4F00;
-    margin-bottom: 4px;
-  }
-
+  .sidebar-header { padding: 24px 16px 16px; border-bottom: 1px solid #1A1A1A; flex-shrink: 0; }
+  .sidebar-header h1 { font-size: 18px; font-weight: 700; color: #FF4F00; margin-bottom: 4px; }
   .sidebar-header h1 span { color: #555; }
+  .sidebar-header .tagline { color: #555; font-size: 10px; }
 
-  .sidebar-header .tagline {
-    color: #555;
-    font-size: 10px;
-  }
-
-  .motif-section {
-    padding: 12px 16px;
-    border-bottom: 1px solid #1A1A1A;
-    flex-shrink: 0;
-  }
-
-  .motif-label {
-    color: #FF4F00;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-    display: block;
-  }
-
+  .motif-section { padding: 12px 16px; border-bottom: 1px solid #1A1A1A; flex-shrink: 0; }
+  .motif-label { color: #FF4F00; font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; display: block; }
   .motif-input {
-    width: 100%;
-    background: #111;
-    border: none;
-    border-bottom: 2px solid #FF4F00;
-    color: #FF4F00;
-    font-family: inherit;
-    font-size: 12px;
-    padding: 6px 8px;
-    outline: none;
+    width: 100%; background: #111; border: none; border-bottom: 2px solid #FF4F00;
+    color: #FF4F00; font-family: inherit; font-size: 12px; padding: 6px 8px; outline: none;
   }
+  .motif-input::placeholder { color: #444; font-style: italic; }
 
-  .motif-input::placeholder {
-    color: #444;
-    font-style: italic;
-  }
-
-  /* ── WORD CLOUD ── */
-  .briefs-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px;
-  }
-
-  .briefs-scroll::-webkit-scrollbar { width: 4px; }
-  .briefs-scroll::-webkit-scrollbar-track { background: transparent; }
-  .briefs-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-
-  .examples-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .example-btn {
-    background: transparent;
-    border: none;
-    color: #ccc;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 900;
-    padding: 6px 0;
-    cursor: pointer;
-    transition: color 0.15s;
-    line-height: 1.05;
-    width: 100%;
-    border-bottom: 1px solid #1a1a1a;
-    text-align: left;
-    white-space: nowrap;
-    display: block;
-  }
-
-  .example-btn:hover { color: #FF4F00; }
-  .example-btn.selected { color: #FF4F00; text-decoration: underline; text-underline-offset: 3px; }
-
-  .examples-grid.fading .example-btn {
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 0.2s, transform 0.2s;
-  }
-
-  .example-btn.fade-in {
-    animation: fadeUp 0.3s ease forwards;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .regen-row {
-    padding: 10px 16px;
-    border-top: 1px solid #1A1A1A;
-    flex-shrink: 0;
-  }
-
+  .regen-row { padding: 10px 16px; border-bottom: 1px solid #1A1A1A; flex-shrink: 0; }
   .regen-btn {
-    background: none;
-    border: 1px solid #2A2A2A;
-    color: #444;
-    font-family: inherit;
-    font-size: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 1px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    width: 100%;
-    justify-content: center;
+    background: none; border: 1px solid #2A2A2A; color: #444;
+    font-family: inherit; font-size: 10px; padding: 5px 10px; cursor: pointer;
+    letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px;
+    width: 100%; justify-content: center; transition: all 0.2s;
   }
-
   .regen-btn:hover { border-color: #FF4F00; color: #FF4F00; }
   .regen-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .regen-btn .regen-icon { font-size: 13px; transition: transform 0.4s; }
+  .regen-btn.spinning .regen-icon { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .regen-btn .regen-icon {
-    font-size: 13px;
-    display: inline-block;
-    transition: transform 0.4s;
+  .briefs-scroll { flex: 1; overflow-y: auto; padding: 8px; }
+  .briefs-scroll::-webkit-scrollbar { width: 4px; }
+  .briefs-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  .examples-grid { display: flex; flex-direction: column; gap: 6px; }
+  .example-btn {
+    background: transparent; border: none; color: #ccc;
+    font-family: inherit; font-size: 14px; font-weight: 900;
+    padding: 6px 0; cursor: pointer; line-height: 1.05;
+    width: 100%; border-bottom: 1px solid #1a1a1a;
+    text-align: left; white-space: nowrap; transition: color 0.15s;
   }
+  .example-btn:hover { color: #FF4F00; }
+  .example-btn.selected { color: #FF4F00; text-decoration: underline; text-underline-offset: 3px; }
+  .examples-grid.fading .example-btn { opacity: 0; transform: translateY(-4px); transition: opacity 0.2s, transform 0.2s; }
+  .example-btn.fade-in { animation: fadeUp 0.3s ease forwards; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  .regen-btn.spinning .regen-icon {
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* ── RIGHT PANEL (4/5) ── */
-  .main-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-  }
-
+  /* ── MAIN PANEL ── */
+  .main-panel { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
   .main-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid #1A1A1A;
-    flex-shrink: 0;
-    min-height: 56px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    padding: 16px 24px; border-bottom: 1px solid #1A1A1A;
+    flex-shrink: 0; min-height: 56px; display: flex; align-items: center; gap: 16px;
   }
-
-  .active-brief-label {
-    color: #FF4F00;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    white-space: nowrap;
-  }
-
-  .active-brief-text {
-    color: #C0C0C0;
-    font-size: 13px;
-  }
-
-  .status {
-    color: #FF4F00;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
-  .status::before {
-    content: '> ';
-    color: #555;
-  }
-
+  .active-brief-label { color: #FF4F00; font-size: 10px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
+  .active-brief-text { color: #C0C0C0; font-size: 13px; }
+  .status { color: #FF4F00; font-size: 12px; white-space: nowrap; }
+  .status::before { content: '> '; color: #555; }
   .status:empty::before { content: ''; }
 
-  .empty-state {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    color: #333;
-    font-size: 13px;
-    letter-spacing: 1px;
-  }
+  .empty-state { display: flex; align-items: center; justify-content: center; flex: 1; color: #333; font-size: 13px; letter-spacing: 1px; }
+  .results-scroll { flex: 1; overflow-y: auto; padding: 24px; }
+  .results-scroll::-webkit-scrollbar { width: 6px; }
+  .results-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
-  /* ── COLLIDER LOADING ANIMATION ── */
-  .collider-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    gap: 32px;
-  }
+  /* ── DOMAIN BLOCK ── */
+  .domain-block { margin-bottom: 40px; padding-left: 20px; }
+  .domain-entering { animation: slideIn 0.4s ease forwards; opacity: 0; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
 
-  .collider-anim {
-    position: relative;
-    width: 120px;
-    height: 120px;
+  .domain-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .domain-logo-slot {
+    flex-shrink: 0; width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid #222; border-radius: 8px; background: #0D0D0D;
+    overflow: hidden; transition: border-color 0.3s;
   }
-
-  /* Orbital rings */
-  .orbit {
-    position: absolute;
-    inset: 0;
-    border: 1px solid rgba(255,79,0,0.15);
-    border-radius: 50%;
-    animation: pulse-ring 2s ease-in-out infinite;
+  .domain-logo-slot svg { width: 40px; height: 40px; }
+  .domain-logo-slot.loaded { border-color: transparent; }
+  .domain-logo-placeholder {
+    width: 16px; height: 16px; border: 2px solid #333;
+    border-top-color: transparent; border-radius: 50%;
+    animation: spin 1s linear infinite;
   }
-
-  .orbit:nth-child(2) {
-    inset: 15px;
-    border-color: rgba(0,204,102,0.12);
-    animation-delay: 0.5s;
+  .domain-info { flex: 1; min-width: 0; }
+  .domain-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
   }
+  .domain-principle { color: #999; font-size: 12px; margin-top: 4px; }
+  .domain-question { color: #666; font-size: 12px; font-style: italic; margin-top: 4px; }
+  .domain-waiting { color: #333; font-size: 11px; padding: 8px 0; letter-spacing: 1px; }
 
-  .orbit:nth-child(3) {
-    inset: 30px;
-    border-color: rgba(255,79,0,0.08);
-    animation-delay: 1s;
+  /* ── IDEA CARD ── */
+  .idea-card {
+    background: #111; border: 1px solid #1a1a1a; border-radius: 6px;
+    padding: 20px; margin-bottom: 12px; display: flex; gap: 16px;
+    transition: border-color 0.2s;
   }
+  .idea-card:hover { border-color: #2a2a2a; }
+  .idea-entering { animation: ideaFade 0.35s ease forwards; opacity: 0; }
+  @keyframes ideaFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  @keyframes pulse-ring {
-    0%, 100% { transform: scale(1); opacity: 0.5; }
-    50% { transform: scale(1.08); opacity: 1; }
+  .idea-logo-slot {
+    flex-shrink: 0; width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid #1a1a1a; border-radius: 8px; background: #0D0D0D;
+    overflow: hidden; transition: border-color 0.3s;
   }
+  .idea-logo-slot svg { width: 48px; height: 48px; }
+  .idea-logo-slot.loaded { border-color: transparent; }
 
-  /* Two particles orbiting */
-  .particle {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    margin: -4px 0 0 -4px;
+  .idea-body { flex: 1; min-width: 0; }
+  .idea-company-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px; font-weight: 700; color: #E0E0E0;
+    margin-bottom: 2px; letter-spacing: 0.5px;
   }
-
-  .particle-a {
-    background: #FF4F00;
-    box-shadow: 0 0 12px rgba(255,79,0,0.6), 0 0 24px rgba(255,79,0,0.3);
-    animation: orbit-a 2.4s linear infinite;
+  .idea-tagline {
+    color: #e0a070; font-size: 13px; font-weight: 600;
+    margin-bottom: 10px; font-style: italic;
   }
-
-  .particle-b {
-    background: #00CC66;
-    box-shadow: 0 0 12px rgba(0,204,102,0.6), 0 0 24px rgba(0,204,102,0.3);
-    animation: orbit-b 2.4s linear infinite;
+  .idea-mechanism { color: #888; font-size: 12px; margin-bottom: 6px; line-height: 1.5; }
+  .idea-attribution { color: #444; font-size: 11px; }
+  .idea-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .idea-actions button {
+    background: none; border: 1px solid #222; color: #555;
+    font-family: inherit; font-size: 16px; width: 36px; height: 36px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    border-radius: 4px; transition: all 0.15s;
   }
+  .idea-actions button:hover { border-color: #666; color: #E0E0E0; }
+  .idea-actions button.active-love { border-color: #FF4F00; color: #FF4F00; background: rgba(255,79,0,0.1); }
+  .idea-actions button.active-like { border-color: #00CC66; color: #00CC66; background: rgba(0,204,102,0.1); }
+  .idea-actions button.active-trash { border-color: #666; color: #666; background: rgba(102,102,102,0.1); }
+  .idea-card.trashed { opacity: 0.3; }
 
-  @keyframes orbit-a {
-    0% { transform: rotate(0deg) translateX(44px) rotate(0deg); }
-    100% { transform: rotate(360deg) translateX(44px) rotate(-360deg); }
-  }
+  .loading-dots::after { content: ''; animation: dots 1.5s steps(4, end) infinite; }
+  @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 
-  @keyframes orbit-b {
-    0% { transform: rotate(180deg) translateX(44px) rotate(-180deg); }
-    100% { transform: rotate(540deg) translateX(44px) rotate(-540deg); }
-  }
-
-  /* Center glow on collision */
-  .core-glow {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    top: 50%;
-    left: 50%;
-    margin: -3px 0 0 -3px;
-    border-radius: 50%;
-    background: #FF4F00;
-    animation: core-pulse 1.2s ease-in-out infinite;
-  }
-
-  @keyframes core-pulse {
-    0%, 100% { transform: scale(1); opacity: 0.3; box-shadow: 0 0 8px rgba(255,79,0,0.3); }
-    50% { transform: scale(2.5); opacity: 0.8; box-shadow: 0 0 20px rgba(255,79,0,0.6), 0 0 40px rgba(255,79,0,0.2); }
-  }
-
-  /* Spark burst at collision points */
-  .spark {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: #FF4F00;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    animation: spark-fly 2.4s linear infinite;
-    opacity: 0;
-  }
-
-  .spark:nth-child(6) { animation-delay: 0s; --angle: 30deg; --dist: 55px; }
+  /* ── COLLIDER LOADING ── */
+  .collider-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 32px; }
+  .collider-anim { position: relative; width: 120px; height: 120px; }
+  .orbit { position: absolute; inset: 0; border: 1px solid rgba(255,79,0,0.15); border-radius: 50%; animation: pulse-ring 2s ease-in-out infinite; }
+  .orbit:nth-child(2) { inset: 15px; border-color: rgba(0,204,102,0.12); animation-delay: 0.5s; }
+  .orbit:nth-child(3) { inset: 30px; border-color: rgba(255,79,0,0.08); animation-delay: 1s; }
+  @keyframes pulse-ring { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.08); opacity: 1; } }
+  .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; top: 50%; left: 50%; margin: -4px 0 0 -4px; }
+  .particle-a { background: #FF4F00; box-shadow: 0 0 12px rgba(255,79,0,0.6); animation: orbit-a 2.4s linear infinite; }
+  .particle-b { background: #00CC66; box-shadow: 0 0 12px rgba(0,204,102,0.6); animation: orbit-b 2.4s linear infinite; }
+  @keyframes orbit-a { 0% { transform: rotate(0deg) translateX(44px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(44px) rotate(-360deg); } }
+  @keyframes orbit-b { 0% { transform: rotate(180deg) translateX(44px) rotate(-180deg); } 100% { transform: rotate(540deg) translateX(44px) rotate(-540deg); } }
+  .core-glow { position: absolute; width: 6px; height: 6px; top: 50%; left: 50%; margin: -3px; border-radius: 50%; background: #FF4F00; animation: core-pulse 1.2s ease-in-out infinite; }
+  @keyframes core-pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(2.5); opacity: 0.8; box-shadow: 0 0 20px rgba(255,79,0,0.6); } }
+  .spark { position: absolute; width: 2px; height: 2px; background: #FF4F00; border-radius: 50%; top: 50%; left: 50%; animation: spark-fly 2.4s linear infinite; opacity: 0; }
+  .spark:nth-child(6) { --angle: 30deg; --dist: 55px; }
   .spark:nth-child(7) { animation-delay: 0.1s; --angle: 150deg; --dist: 45px; background: #00CC66; }
   .spark:nth-child(8) { animation-delay: 0.2s; --angle: 270deg; --dist: 50px; }
   .spark:nth-child(9) { animation-delay: 1.2s; --angle: 90deg; --dist: 48px; background: #00CC66; }
   .spark:nth-child(10) { animation-delay: 1.3s; --angle: 210deg; --dist: 52px; }
   .spark:nth-child(11) { animation-delay: 1.4s; --angle: 330deg; --dist: 46px; background: #00CC66; }
-
-  @keyframes spark-fly {
-    0%, 45% { opacity: 0; transform: translate(0,0); }
-    50% { opacity: 1; transform: translate(0,0); }
-    70% { opacity: 0.8; transform: rotate(var(--angle)) translateX(var(--dist)); }
-    100% { opacity: 0; transform: rotate(var(--angle)) translateX(var(--dist)); }
-  }
-
-  .collider-text {
-    color: #555;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .collider-text::after {
-    content: '';
-    animation: dots 1.5s steps(4, end) infinite;
-  }
-
-  .results-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px;
-  }
-
-  .results-scroll::-webkit-scrollbar { width: 6px; }
-  .results-scroll::-webkit-scrollbar-track { background: transparent; }
-  .results-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-
-  .domain-block {
-    margin-bottom: 32px;
-    border-left: 2px solid #00CC66;
-    padding-left: 20px;
-  }
-
-  .domain-entering {
-    animation: slideIn 0.4s ease forwards;
-    opacity: 0;
-  }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-12px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  .domain-waiting {
-    color: #333;
-    font-size: 11px;
-    padding: 8px 0;
-    letter-spacing: 1px;
-  }
-
-  .domain-ideas { min-height: 20px; }
-
-  .idea-entering {
-    animation: ideaFade 0.35s ease forwards;
-    opacity: 0;
-  }
-
-  @keyframes ideaFade {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .domain-header { margin-bottom: 16px; }
-
-  .domain-name {
-    color: #00CC66;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .domain-principle {
-    color: #999;
-    font-size: 12px;
-    margin-top: 4px;
-  }
-
-  .domain-question {
-    color: #666;
-    font-size: 12px;
-    font-style: italic;
-    margin-top: 4px;
-  }
-
-  .idea-card {
-    background: #111;
-    border: 1px solid #222;
-    padding: 20px;
-    margin-bottom: 12px;
-    position: relative;
-    display: flex;
-    gap: 16px;
-  }
-
-  .idea-logo {
-    flex-shrink: 0;
-    width: 56px;
-    height: 56px;
-  }
-
-  .idea-logo svg {
-    width: 56px;
-    height: 56px;
-  }
-
-  .idea-body {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .idea-name {
-    color: #e0a070;
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
-  .idea-mechanism {
-    color: #999;
-    font-size: 13px;
-    margin-bottom: 8px;
-  }
-
-  .idea-attribution {
-    color: #444;
-    font-size: 11px;
-  }
-
-  .idea-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-  }
-
-  .idea-actions button {
-    background: none;
-    border: 1px solid #333;
-    color: #888;
-    font-family: inherit;
-    font-size: 16px;
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
-
-  .idea-actions button:hover { border-color: #666; color: #E0E0E0; }
-  .idea-actions button.active-love { border-color: #FF4F00; color: #FF4F00; background: rgba(255,79,0,0.1); }
-  .idea-actions button.active-like { border-color: #00CC66; color: #00CC66; background: rgba(0,204,102,0.1); }
-  .idea-actions button.active-trash { border-color: #666; color: #666; background: rgba(102,102,102,0.1); }
-
-  .idea-card.trashed { opacity: 0.3; }
-
-  .loading-dots::after {
-    content: '';
-    animation: dots 1.5s steps(4, end) infinite;
-  }
-
-  @keyframes dots {
-    0% { content: ''; }
-    25% { content: '.'; }
-    50% { content: '..'; }
-    75% { content: '...'; }
-  }
+  @keyframes spark-fly { 0%, 45% { opacity: 0; transform: translate(0,0); } 50% { opacity: 1; } 70% { opacity: 0.8; transform: rotate(var(--angle)) translateX(var(--dist)); } 100% { opacity: 0; transform: rotate(var(--angle)) translateX(var(--dist)); } }
+  .collider-text { color: #555; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+  .collider-text::after { content: ''; animation: dots 1.5s steps(4, end) infinite; }
 
   /* ── BACK BUTTON (mobile only) ── */
   .back-btn {
-    display: none;
-    background: none;
-    border: 1px solid #333;
-    color: #888;
-    font-family: inherit;
-    font-size: 11px;
-    padding: 6px 12px;
-    cursor: pointer;
-    letter-spacing: 1px;
+    display: none; background: none; border: 1px solid #333; color: #888;
+    font-family: inherit; font-size: 11px; padding: 6px 12px; cursor: pointer; letter-spacing: 1px;
   }
   .back-btn:hover { border-color: #FF4F00; color: #FF4F00; }
 
   /* ── MOBILE ── */
   @media (max-width: 700px) {
     html, body { overflow: auto; height: auto; }
-
-    .layout {
-      flex-direction: column;
-      height: auto;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: 100%;
-      min-width: unset;
-      height: auto;
-      max-height: none;
-      border-right: none;
-      border-bottom: 1px solid #1A1A1A;
-      overflow: visible;
-    }
-
-    .briefs-scroll {
-      overflow-y: visible;
-      max-height: none;
-    }
-
-    .main-panel {
-      height: auto;
-      min-height: 60vh;
-      overflow: visible;
-    }
-
-    .results-scroll {
-      overflow-y: visible;
-      padding: 16px;
-    }
-
+    .layout { flex-direction: column; height: auto; min-height: 100vh; }
+    .sidebar { width: 100%; min-width: unset; height: auto; max-height: none; border-right: none; border-bottom: 1px solid #1A1A1A; overflow: visible; }
+    .briefs-scroll { overflow-y: visible; max-height: none; }
+    .main-panel { height: auto; min-height: 60vh; overflow: visible; }
+    .results-scroll { overflow-y: visible; padding: 16px; }
     .back-btn { display: inline-block; }
-
-    /* When colliding, hide sidebar on mobile */
     .layout.mobile-results .sidebar { display: none; }
     .layout.mobile-results .main-panel { min-height: 100vh; }
-
     .sidebar-header h1 { font-size: 16px; }
     .sidebar-header { padding: 16px 12px 12px; }
     .motif-section { padding: 8px 12px; }
     .regen-row { padding: 8px 12px; }
     .briefs-scroll { padding: 6px 12px; }
-
-    .example-btn {
-      font-size: 14px !important; /* override fitBriefFonts on mobile */
-      white-space: normal;
-      line-height: 1.3;
-    }
-
+    .example-btn { font-size: 14px !important; white-space: normal; line-height: 1.3; }
     .domain-block { padding-left: 12px; }
+
     .idea-card {
-      padding: 14px;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+      flex-direction: column; align-items: center; text-align: center; padding: 16px;
     }
-    .idea-logo { width: 72px; height: 72px; }
-    .idea-logo svg { width: 72px; height: 72px; }
+    .idea-logo-slot { width: 72px; height: 72px; margin-bottom: 4px; }
+    .idea-logo-slot svg { width: 60px; height: 60px; }
     .idea-actions { justify-content: center; }
+    .idea-company-name { font-size: 16px; }
+
+    .domain-header { flex-direction: column; align-items: center; text-align: center; }
+    .domain-logo-slot { width: 56px; height: 56px; }
 
     .collider-loading { min-height: 50vh; }
     .empty-state { min-height: 30vh; }
@@ -609,24 +231,20 @@
 <body>
 <div class="layout">
 
-  <!-- LEFT SIDEBAR -->
   <div class="sidebar">
     <div class="sidebar-header">
       <h1>OPEN COLLIDER <span>/ POC</span></h1>
       <div class="tagline">bisociation engine</div>
     </div>
-
     <div class="motif-section">
       <span class="motif-label">MOTIF /</span>
       <input type="text" id="motif" class="motif-input" placeholder="sharks, decay, rebellion..." />
     </div>
-
     <div class="regen-row">
-      <button class="regen-btn" id="regenBtn" onclick="regenExamples()" title="Regenerate examples">
+      <button class="regen-btn" id="regenBtn" onclick="regenExamples()">
         <span class="regen-icon">↻</span> NEW BRIEFS
       </button>
     </div>
-
     <div class="briefs-scroll">
       <div class="examples-grid" id="examples">
         <button class="example-btn" onclick="useBrief(this)">crypto wallet onboarding</button>
@@ -651,10 +269,8 @@
         <button class="example-btn" onclick="useBrief(this)">unused gym memberships</button>
       </div>
     </div>
-
   </div>
 
-  <!-- RIGHT PANEL -->
   <div class="main-panel">
     <div class="main-header" id="mainHeader">
       <button class="back-btn" id="backBtn" onclick="goBack()">← BRIEFS</button>
@@ -662,27 +278,17 @@
       <span class="active-brief-text" id="activeBriefText"></span>
       <span class="status" id="status"></span>
     </div>
-
     <div class="empty-state" id="emptyState">click a brief to collide</div>
-
     <div class="collider-loading" id="loadingAnim" style="display:none">
       <div class="collider-anim">
-        <div class="orbit"></div>
-        <div class="orbit"></div>
-        <div class="orbit"></div>
-        <div class="particle particle-a"></div>
-        <div class="particle particle-b"></div>
+        <div class="orbit"></div><div class="orbit"></div><div class="orbit"></div>
+        <div class="particle particle-a"></div><div class="particle particle-b"></div>
         <div class="core-glow"></div>
-        <div class="spark"></div>
-        <div class="spark"></div>
-        <div class="spark"></div>
-        <div class="spark"></div>
-        <div class="spark"></div>
-        <div class="spark"></div>
+        <div class="spark"></div><div class="spark"></div><div class="spark"></div>
+        <div class="spark"></div><div class="spark"></div><div class="spark"></div>
       </div>
       <div class="collider-text" id="loadingText">colliding domains</div>
     </div>
-
     <div class="results-scroll" id="results" style="display:none"></div>
   </div>
 
@@ -690,118 +296,27 @@
 
 <script>
 let domains = [];
-
-// Procedural SVG logo generator — deterministic from idea name
-function generateLogo(name) {
-  // Simple hash from string
-  let h = 0;
-  for (let i = 0; i < name.length; i++) {
-    h = ((h << 5) - h + name.charCodeAt(i)) | 0;
-  }
-  const seed = Math.abs(h);
-
-  // Pick accent colors from seed
-  const hues = [
-    [255, 79, 0],   // orange
-    [0, 204, 102],  // green
-    [0, 102, 255],  // blue
-    [180, 60, 255], // purple
-    [255, 200, 0],  // gold
-    [0, 200, 200],  // cyan
-  ];
-  const c1 = hues[seed % hues.length];
-  const c2 = hues[(seed * 7 + 3) % hues.length];
-
-  const s = 56; // viewBox size
-  const cx = s / 2, cy = s / 2;
-  let shapes = '';
-
-  // Layer 1: outer ring or polygon
-  const sides = 3 + (seed % 5); // 3-7 sides
-  const r1 = 24;
-  const rotation = (seed * 13) % 360;
-  let points = [];
-  for (let i = 0; i < sides; i++) {
-    const a = (Math.PI * 2 * i / sides) + (rotation * Math.PI / 180);
-    points.push(`${cx + r1 * Math.cos(a)},${cy + r1 * Math.sin(a)}`);
-  }
-  shapes += `<polygon points="${points.join(' ')}" fill="none" stroke="rgba(${c1.join(',')},0.6)" stroke-width="1.5"/>`;
-
-  // Layer 2: inner geometric
-  const innerType = (seed >> 4) % 4;
-  const r2 = 12 + (seed % 6);
-
-  if (innerType === 0) {
-    // Concentric circles
-    shapes += `<circle cx="${cx}" cy="${cy}" r="${r2}" fill="none" stroke="rgba(${c2.join(',')},0.4)" stroke-width="1"/>`;
-    shapes += `<circle cx="${cx}" cy="${cy}" r="${r2 * 0.5}" fill="rgba(${c1.join(',')},0.15)" stroke="rgba(${c1.join(',')},0.7)" stroke-width="1.5"/>`;
-  } else if (innerType === 1) {
-    // Cross lines
-    const d = r2 * 0.8;
-    shapes += `<line x1="${cx - d}" y1="${cy}" x2="${cx + d}" y2="${cy}" stroke="rgba(${c2.join(',')},0.5)" stroke-width="1.5"/>`;
-    shapes += `<line x1="${cx}" y1="${cy - d}" x2="${cx}" y2="${cy + d}" stroke="rgba(${c2.join(',')},0.5)" stroke-width="1.5"/>`;
-    shapes += `<circle cx="${cx}" cy="${cy}" r="4" fill="rgba(${c1.join(',')},0.8)"/>`;
-  } else if (innerType === 2) {
-    // Diamond
-    const d = r2 * 0.7;
-    shapes += `<polygon points="${cx},${cy - d} ${cx + d},${cy} ${cx},${cy + d} ${cx - d},${cy}" fill="rgba(${c1.join(',')},0.1)" stroke="rgba(${c1.join(',')},0.6)" stroke-width="1.5"/>`;
-    shapes += `<circle cx="${cx}" cy="${cy}" r="3" fill="rgba(${c2.join(',')},0.9)"/>`;
-  } else {
-    // Nested triangles
-    const d = r2 * 0.7;
-    shapes += `<polygon points="${cx},${cy - d} ${cx + d * 0.87},${cy + d * 0.5} ${cx - d * 0.87},${cy + d * 0.5}" fill="none" stroke="rgba(${c1.join(',')},0.5)" stroke-width="1.5"/>`;
-    shapes += `<polygon points="${cx},${cy + d * 0.6} ${cx + d * 0.52},${cy - d * 0.3} ${cx - d * 0.52},${cy - d * 0.3}" fill="none" stroke="rgba(${c2.join(',')},0.5)" stroke-width="1.5"/>`;
-  }
-
-  // Layer 3: accent dots at vertices
-  const dotCount = 2 + (seed % 3);
-  for (let i = 0; i < dotCount; i++) {
-    const a = (Math.PI * 2 * i / dotCount) + ((seed * 37) % 360) * Math.PI / 180;
-    const dr = 18 + ((seed >> (i + 2)) % 6);
-    const dx = cx + dr * Math.cos(a);
-    const dy = cy + dr * Math.sin(a);
-    shapes += `<circle cx="${dx}" cy="${dy}" r="2" fill="rgba(${c1.join(',')},0.7)"/>`;
-  }
-
-  // Layer 4: subtle arc
-  const arcR = 20 + (seed % 5);
-  const arcStart = (seed * 23) % 360;
-  const arcEnd = arcStart + 90 + (seed % 90);
-  const x1 = cx + arcR * Math.cos(arcStart * Math.PI / 180);
-  const y1 = cy + arcR * Math.sin(arcStart * Math.PI / 180);
-  const x2 = cx + arcR * Math.cos(arcEnd * Math.PI / 180);
-  const y2 = cy + arcR * Math.sin(arcEnd * Math.PI / 180);
-  shapes += `<path d="M${x1},${y1} A${arcR},${arcR} 0 0 1 ${x2},${y2}" fill="none" stroke="rgba(${c2.join(',')},0.3)" stroke-width="1"/>`;
-
-  return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">${shapes}</svg>`;
-}
+const DOMAIN_COLORS = ['#00CC66', '#FF4F00', '#0088FF', '#AA44FF'];
 
 function fitBriefFonts() {
-  // Skip on mobile — briefs wrap naturally
   if (window.innerWidth <= 700) return;
-
   const grid = document.getElementById('examples');
   if (!grid) return;
   const containerWidth = grid.clientWidth;
-  if (containerWidth < 10) return; // not laid out yet
-
-  // Hidden measurement element
+  if (containerWidth < 10) return;
   const ruler = document.createElement('span');
   ruler.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-weight:900;font-family:inherit;';
   document.body.appendChild(ruler);
-
   grid.querySelectorAll('.example-btn').forEach(btn => {
     ruler.textContent = btn.textContent;
     let lo = 10, hi = 120;
     while (lo < hi) {
       const mid = Math.ceil((lo + hi) / 2);
       ruler.style.fontSize = mid + 'px';
-      if (ruler.offsetWidth <= containerWidth) lo = mid;
-      else hi = mid - 1;
+      if (ruler.offsetWidth <= containerWidth) lo = mid; else hi = mid - 1;
     }
     btn.style.fontSize = lo + 'px';
   });
-
   document.body.removeChild(ruler);
 }
 
@@ -811,11 +326,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   fitBriefFonts();
 });
-
 window.addEventListener('resize', fitBriefFonts);
 
 function useBrief(btn) {
-  // Highlight selected
   document.querySelectorAll('.example-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   collide(btn.textContent);
@@ -824,26 +337,20 @@ function useBrief(btn) {
 async function regenExamples() {
   const btn = document.getElementById('regenBtn');
   const grid = document.getElementById('examples');
-
   btn.disabled = true;
   btn.classList.add('spinning');
   grid.classList.add('fading');
-
   try {
     const motif = document.getElementById('motif').value.trim();
     const res = await fetch('/api/regen-examples', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ motif: motif || undefined }),
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-
     await new Promise(r => setTimeout(r, 250));
-
     grid.innerHTML = '';
     grid.classList.remove('fading');
-
     data.briefs.forEach((brief, i) => {
       const b = document.createElement('button');
       b.className = 'example-btn fade-in';
@@ -870,8 +377,6 @@ function goBack() {
 async function collide(brief) {
   if (!brief || !brief.trim()) return;
   brief = brief.trim();
-
-  // On mobile, switch to results view
   document.querySelector('.layout').classList.add('mobile-results');
   window.scrollTo(0, 0);
 
@@ -880,7 +385,6 @@ async function collide(brief) {
   const status = document.getElementById('status');
   const results = document.getElementById('results');
   const empty = document.getElementById('emptyState');
-
   const loading = document.getElementById('loadingAnim');
   const loadingText = document.getElementById('loadingText');
 
@@ -896,32 +400,23 @@ async function collide(brief) {
 
   try {
     const res = await fetch('/api/collide', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ brief }),
     });
-
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
-
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
       buffer = lines.pop();
-
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         const raw = line.slice(6).trim();
         if (!raw || raw === '[DONE]') continue;
-
-        try {
-          const msg = JSON.parse(raw);
-          handleEvent(msg);
-        } catch (e) {}
+        try { handleEvent(JSON.parse(raw)); } catch (e) {}
       }
     }
   } catch (err) {
@@ -935,27 +430,30 @@ function handleEvent(msg) {
   const loading = document.getElementById('loadingAnim');
 
   if (msg.type === 'status') {
-    const loadingText = document.getElementById('loadingText');
-    loadingText.textContent = msg.message.toLowerCase().replace(/\.+$/, '');
+    document.getElementById('loadingText').textContent = msg.message.toLowerCase().replace(/\.+$/, '');
   }
 
   if (msg.type === 'domains') {
     domains = msg.domains;
-
-    // Hide animation, show results with all domain blocks as empty shells
     loading.style.display = 'none';
     results.style.display = 'block';
-
     domains.forEach((d, i) => {
+      const color = DOMAIN_COLORS[i % DOMAIN_COLORS.length];
       const block = document.createElement('div');
       block.className = 'domain-block domain-entering';
       block.id = `domain-${i}`;
       block.style.animationDelay = `${i * 120}ms`;
+      block.style.borderLeft = `2px solid ${color}`;
       block.innerHTML = `
         <div class="domain-header">
-          <div class="domain-name">${d.domain || d.name}</div>
-          <div class="domain-principle">${d.active_principle || d.principle || ''}</div>
-          <div class="domain-question">${d.bridging_question || d.question || ''}</div>
+          <div class="domain-logo-slot" id="domain-logo-${i}">
+            <div class="domain-logo-placeholder"></div>
+          </div>
+          <div class="domain-info">
+            <div class="domain-name" style="color:${color}">${d.domain || d.name}</div>
+            <div class="domain-principle">${d.active_principle || ''}</div>
+            <div class="domain-question">${d.bridging_question || ''}</div>
+          </div>
         </div>
         <div class="domain-ideas" id="ideas-${i}">
           <div class="domain-waiting"><span class="loading-dots">awaiting collision</span></div>
@@ -963,31 +461,42 @@ function handleEvent(msg) {
       `;
       results.appendChild(block);
     });
-
     status.textContent = `${domains.length} domains found — colliding...`;
   }
 
+  if (msg.type === 'domain-logos') {
+    (msg.logos || []).forEach((svg, i) => {
+      const slot = document.getElementById(`domain-logo-${i}`);
+      if (slot && svg) {
+        slot.innerHTML = svg;
+        slot.classList.add('loaded');
+      } else if (slot) {
+        // Remove spinner if no logo
+        const ph = slot.querySelector('.domain-logo-placeholder');
+        if (ph) ph.style.display = 'none';
+      }
+    });
+  }
+
   if (msg.type === 'collision') {
-    // Find the matching domain block
-    const idx = domains.findIndex(d => (d.domain || d.name) === msg.domain);
+    const idx = msg.domainIndex;
     const container = document.getElementById(`ideas-${idx}`);
     if (!container) return;
-
-    // Remove the "awaiting" placeholder
     const waiting = container.querySelector('.domain-waiting');
     if (waiting) waiting.remove();
 
-    // Add each idea
-    const ideas = msg.ideas || [];
-    ideas.forEach((idea, j) => {
+    (msg.ideas || []).forEach((idea, j) => {
       const card = document.createElement('div');
       card.className = 'idea-card idea-entering';
+      card.id = `idea-${idx}-${j}`;
       card.style.animationDelay = `${j * 80}ms`;
-      const logo = generateLogo(idea.name);
       card.innerHTML = `
-        <div class="idea-logo">${logo}</div>
+        <div class="idea-logo-slot" id="idea-logo-${idx}-${j}">
+          <div class="domain-logo-placeholder"></div>
+        </div>
         <div class="idea-body">
-          <div class="idea-name">${idea.name}</div>
+          <div class="idea-company-name">${idea.company_name || idea.name || 'Untitled'}</div>
+          <div class="idea-tagline">${idea.tagline || ''}</div>
           <div class="idea-mechanism">${idea.mechanism}</div>
           <div class="idea-attribution">${idea.attribution || ''}</div>
           <div class="idea-actions">
@@ -1000,17 +509,32 @@ function handleEvent(msg) {
       container.appendChild(card);
     });
 
-    // Update status
     const filledCount = results.querySelectorAll('.idea-card').length;
-    const remainingDomains = results.querySelectorAll('.domain-waiting').length;
-    if (remainingDomains > 0) {
-      status.textContent = `${filledCount} ideas — ${remainingDomains} domain${remainingDomains > 1 ? 's' : ''} remaining...`;
+    const remaining = results.querySelectorAll('.domain-waiting').length;
+    if (remaining > 0) {
+      status.textContent = `${filledCount} ideas — ${remaining} domain${remaining > 1 ? 's' : ''} remaining...`;
     }
+  }
+
+  if (msg.type === 'idea-logos') {
+    const idx = msg.domainIndex;
+    (msg.logos || []).forEach((svg, j) => {
+      const slot = document.getElementById(`idea-logo-${idx}-${j}`);
+      if (slot && svg) {
+        slot.innerHTML = svg;
+        slot.classList.add('loaded');
+      } else if (slot) {
+        const ph = slot.querySelector('.domain-logo-placeholder');
+        if (ph) ph.style.display = 'none';
+      }
+    });
   }
 
   if (msg.type === 'done') {
     const ideaCount = results.querySelectorAll('.idea-card').length;
     status.textContent = `${ideaCount} ideas from ${domains.length} domains`;
+    // Clean up any remaining spinners
+    results.querySelectorAll('.domain-logo-placeholder').forEach(ph => ph.style.display = 'none');
   }
 
   if (msg.type === 'error') {
@@ -1022,17 +546,10 @@ function handleEvent(msg) {
 
 function rate(btn, type) {
   const actions = btn.parentElement;
-  actions.querySelectorAll('button').forEach(b => {
-    b.classList.remove('active-love', 'active-like', 'active-trash');
-  });
+  actions.querySelectorAll('button').forEach(b => b.classList.remove('active-love', 'active-like', 'active-trash'));
   btn.classList.add(`active-${type}`);
-
   const card = btn.closest('.idea-card');
-  if (type === 'trash') {
-    card.classList.add('trashed');
-  } else {
-    card.classList.remove('trashed');
-  }
+  if (type === 'trash') card.classList.add('trashed'); else card.classList.remove('trashed');
 }
 </script>
 </body>
