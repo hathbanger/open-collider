@@ -56,11 +56,11 @@
   .briefs-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
   .examples-grid { display: flex; flex-direction: column; gap: 6px; }
   .example-btn {
-    background: transparent; border: none; color: #ccc;
-    font-family: inherit; font-size: 14px; font-weight: 900;
-    padding: 6px 0; cursor: pointer; line-height: 1.05;
+    background: transparent; border: none; color: #777;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    padding: 10px 0; cursor: pointer; line-height: 1.3;
     width: 100%; border-bottom: 1px solid #1a1a1a;
-    text-align: left; white-space: nowrap; transition: color 0.15s;
+    text-align: left; white-space: normal; transition: color 0.15s;
   }
   .example-btn:hover { color: #FF4F00; }
   .example-btn.selected { color: #FF4F00; text-decoration: underline; text-underline-offset: 3px; }
@@ -308,25 +308,7 @@ let domains = [];
 const DOMAIN_COLORS = ['#00CC66', '#FF4F00', '#0088FF', '#AA44FF'];
 
 function fitBriefFonts() {
-  if (window.innerWidth <= 700) return;
-  const grid = document.getElementById('examples');
-  if (!grid) return;
-  const containerWidth = grid.clientWidth;
-  if (containerWidth < 10) return;
-  const ruler = document.createElement('span');
-  ruler.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-weight:900;font-family:inherit;';
-  document.body.appendChild(ruler);
-  grid.querySelectorAll('.example-btn').forEach(btn => {
-    ruler.textContent = btn.textContent;
-    let lo = 10, hi = 120;
-    while (lo < hi) {
-      const mid = Math.ceil((lo + hi) / 2);
-      ruler.style.fontSize = mid + 'px';
-      if (ruler.offsetWidth <= containerWidth) lo = mid; else hi = mid - 1;
-    }
-    btn.style.fontSize = lo + 'px';
-  });
-  document.body.removeChild(ruler);
+  // Uniform size now — no per-item scaling
 }
 
 document.addEventListener('DOMContentLoaded', () => {
